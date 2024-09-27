@@ -1,0 +1,15 @@
+{
+  "name": "alx-files_manager",
+  "version": "1.0.0",
+  "description": "File management system",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node main.js"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "mongodb": "^4.0.0",
+    "redis": "^4.7.0"
+  }
+}
