@@ -6,9 +6,11 @@
   "type": "module",
   "scripts": {
     "dev": "node main.js"
+    "start-server": "node server.js"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "express": "^4.21.0",
     "mongodb": "^4.0.0",
     "redis": "^4.7.0"
   }
