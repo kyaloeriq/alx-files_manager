@@ -1,15 +1,11 @@
 // routes/index.js
-
 import express from 'express';
 import FilesController from '../controllers/FilesController.js';
-import AppController from '../controllers/AppController.js';
 import UsersController from '../controllers/UsersController.js';
 import AuthController from '../controllers/AuthController.js';
 
 const router = express.Router();
 
-router.get('/status', AppController.getStatus);
-router.get('/stats', AppController.getStats);
 router.post('/files', FilesController.postUpload);
 router.post('/users', UsersController.postNew);
 router.get('/connect', AuthController.getConnect);
