@@ -10,8 +10,6 @@ const router = express.Router();
 
 router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
-
-// New user-related routes
 router.post('/files', FilesController.postUpload);
 router.post('/users', UsersController.postNew);
 router.get('/connect', AuthController.getConnect);
