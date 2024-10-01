@@ -1,21 +1,23 @@
 // controllers/AppController.js
 
 import dbClient from '../utils/db.js';
-import redisClient from '../utils/redis.js';
+import redisClient from '../utils/redis.js';  // Assuming a Redis client utility exists
 
 class AppController {
-  static getStatus(req, res) {
+  // Handler for /status - returns Redis and DB statuses
+  static async getStatus(req, res) {
     const redisAlive = redisClient.isAlive();
-    const dbAlive = dbClient.isAlive(); // From your MongoDB utility.
+    const dbAlive = dbClient.isAlive();
     
     res.status(200).json({ redis: redisAlive, db: dbAlive });
   }
 
+  // Handler for /stats - returns the number of users and files in the database
   static async getStats(req, res) {
-    const users = await dbClient.nbUsers(); // Returns the number of users in the collection.
-    const files = await dbClient.nbFiles(); // Returns the number of files in the collection.
+    const usersCount = await dbClient.nbUsers();
+    const filesCount = await dbClient.nbFiles();
 
-    res.status(200).json({ users, files });
+    res.status(200).json({ users: usersCount, files: filesCount });
   }
 }
 
