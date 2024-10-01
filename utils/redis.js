@@ -1,5 +1,6 @@
 // utils/redis.js
 
+import redis from 'redis';
 import { createClient } from 'redis';
 import { promisify } from 'util';
 
