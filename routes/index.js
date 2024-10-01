@@ -1,8 +1,8 @@
 // routes/index.js
 
 import { Router } from 'express';
-import AppController from '../controllers/AppController';
-import UsersController from '../controllers/UsersController';
+import AppController from '../controllers/AppController.js';
+import UsersController from '../controllers/UsersController.js';
 
 const router = Router();
 
