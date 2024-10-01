@@ -2,7 +2,7 @@
   "name": "alx-files_manager",
   "version": "1.0.0",
   "description": "File management system",
-  "main": "main.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "dev": "node main.js",
