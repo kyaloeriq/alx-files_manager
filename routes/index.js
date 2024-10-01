@@ -1,10 +1,11 @@
 // routes/index.js
 
 import { Router } from 'express';
+import express from 'express';
 import AppController from '../controllers/AppController.js';
 import UsersController from '../controllers/UsersController.js';
 
-const router = Router();
+const router = express.Router();
 
 // Define the endpoints and map them to controller methods
 router.get('/status', AppController.getStatus);
