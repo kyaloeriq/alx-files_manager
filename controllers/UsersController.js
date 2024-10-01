@@ -1,6 +1,6 @@
 // controllers/UsersController.js
 
-import dbClient from '../utils/db';
+import dbClient from '../utils/db.js';
 import crypto from 'crypto';
 
 class UsersController {
