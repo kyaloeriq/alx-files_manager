@@ -1,48 +1,44 @@
 // controllers/UsersController.js
 
 import dbClient from '../utils/db.js';
-import crypto from 'crypto';
+import sha1 from 'sha1';
+import { ObjectId } from 'mongodb';
 
 class UsersController {
-  // POST /users - Create a new user
   static async postNew(req, res) {
     const { email, password } = req.body;
 
-    // Validate that email and password are provided
+    // Check if email is provided
     if (!email) {
       return res.status(400).json({ error: 'Missing email' });
     }
 
+    // Check if password is provided
     if (!password) {
       return res.status(400).json({ error: 'Missing password' });
     }
 
-    // Check if the user already exists
-    const usersCollection = dbClient.db.collection('users');
-    const existingUser = await usersCollection.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Already exist' });
-    }
-
-    // Hash the password using SHA1
-    const sha1Password = crypto.createHash('sha1').update(password).digest('hex');
-
-    // Insert the new user into the users collection
-    const newUser = {
-      email,
-      password: sha1Password
-    };
-
     try {
-      const result = await usersCollection.insertOne(newUser);
+      const usersCollection = dbClient.db.collection('users');
 
-      // Return the newly created user with id and email only
-      return res.status(201).json({
-        id: result.insertedId,
-        email: newUser.email,
+      // Check if email already exists in the database
+      const userExists = await usersCollection.findOne({ email });
+      if (userExists) {
+        return res.status(400).json({ error: 'Already exist' });
+      }
+
+      // Hash the password using SHA1
+      const hashedPassword = sha1(password);
+
+      // Insert the new user into the database
+      const result = await usersCollection.insertOne({
+        email,
+        password: hashedPassword,
       });
+
+      // Return the new user's id and email
+      return res.status(201).json({ id: result.insertedId, email });
     } catch (error) {
-      console.error('Error inserting new user:', error);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
