@@ -5,9 +5,6 @@ import AppController from '../controllers/AppController.js';
 import UsersController from '../controllers/UsersController.js';
 
 const router = express.Router();
-const express = require('express');
-const AuthController = require('../controllers/AuthController');
-const UsersController = require('../controllers/UsersController');
 
 // Define the endpoints and map them to controller methods
 router.get('/status', AppController.getStatus);
