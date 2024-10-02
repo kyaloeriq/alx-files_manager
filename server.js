@@ -9,6 +9,9 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Middleware to parse incoming JSON requests
+app.use(express.json());
+
 // Load routes
 app.use('/', routes);
 
