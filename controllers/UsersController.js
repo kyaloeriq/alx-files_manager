@@ -1,9 +1,33 @@
 // controllers/UsersController.js
 
+import redisClient from '../utils/redis.js';
 import dbClient from '../utils/db.js';  // Ensure dbClient is correctly set up in utils/db.js
 import sha1 from 'sha1';  // For password hashing
 
 class UsersController {
+  static async getMe(req, res) {
+    const token = req.headers['x-token'];
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const userKey = `auth_${token}`;
+    const userId = await redisClient.get(userKey);
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Find the user by ID in the database
+    const user = await dbClient.db.collection('users').findOne({ _id: dbClient.objectId(userId) });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Return the user's email and id only
+    return res.status(200).json({ id: user._id, email: user.email });
+  }
   static async postNew(req, res) {
     const { email, password } = req.body;
 
