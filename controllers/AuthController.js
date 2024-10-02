@@ -1,35 +1,37 @@
-// controllers/AuthController.js
-
-import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import dbClient from '../utils/db.js';
-import redisClient from '../utils/redis.js'; // Import your Redis client
+import redisClient from '../utils/redis'; // Assuming Redis client is set up
+import dbClient from '../utils/db'; // MongoDB client
+import sha1 from 'sha1'; // Use this for password hashing
 
 class AuthController {
   static async getConnect(req, res) {
-    // Decode the Basic Auth credentials
     const authHeader = req.headers.authorization;
+    
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
+    // Decode the Base64 authentication header
     const base64Credentials = authHeader.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
     const [email, password] = credentials.split(':');
 
-    // Hash the password using SHA1
-    const sha1Password = crypto.createHash('sha1').update(password).digest('hex');
+    if (!email || !password) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-    // Find the user in the database
-    const user = await dbClient.db.collection('users').findOne({ email, password: sha1Password });
+    // Find user in the database
+    const hashedPassword = sha1(password);
+    const user = await dbClient.db.collection('users').findOne({ email, password: hashedPassword });
+
     if (!user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    // Generate a token and store it in Redis
+    // Generate a token and store the user ID in Redis for 24 hours
     const token = uuidv4();
-    const key = auth_${token};
-    await redisClient.set(key, user._id, 'EX', 86400); // Set expiry to 24 hours
+    const key = `auth_${token}`;
+    await redisClient.setex(key, 86400, user._id.toString()); // 86400 seconds = 24 hours
 
     // Return the token
     return res.status(200).json({ token });
@@ -41,14 +43,16 @@ class AuthController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const key = auth_${token};
-    const result = await redisClient.del(key); // Delete the token from Redis
+    const userKey = `auth_${token}`;
+    const userId = await redisClient.get(userKey);
 
-    if (result === 0) {
+    if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    return res.status(204).send(); // No content
+    // Remove the token from Redis
+    await redisClient.del(userKey);
+    return res.status(204).send();
   }
 }
 
