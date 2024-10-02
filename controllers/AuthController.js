@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import redisClient from '../utils/redis'; // Assuming Redis client is set up
-import dbClient from '../utils/db'; // MongoDB client
+import redisClient from '../utils/redis.js'; // Assuming Redis client is set up
+import dbClient from '../utils/db.js'; // MongoDB client
 import sha1 from 'sha1'; // Use this for password hashing
 
 class AuthController {
